@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Wizualizacja danych akcji Apple</title>
+    <!-- Podłączanie Bootstrap 5 -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Wizualizacja danych akcji Apple</h1>
+        <form action="/plot" method="post">
+            <div class="mb-3">
+                <label for="start_date" class="form-label">Data początkowa:</label>
+                <input type="date" id="start_date" name="start_date" value="{{ min_date }}" min="{{ min_date }}" max="{{ max_date }}" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="end_date" class="form-label">Data końcowa:</label>
+                <input type="date" id="end_date" name="end_date" value="{{ max_date }}" min="{{ min_date }}" max="{{ max_date }}" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-check-label">Typ wykresu:</label>
+                <div class="form-check">
+                    <input type="radio" id="open" name="plot_type" value="open" class="form-check-input" checked>
+                    <label for="open" class="form-check-label">Otwarcie</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" id="close" name="plot_type" value="close" class="form-check-input">
+                    <label for="close" class="form-check-label">Zamknięcie</label>
+                </div>
+                <div class="form-check">
+                    <input type="radio" id="combined" name="plot_type" value="combined" class="form-check-input">
+                    <label for="combined" class="form-check-label">Kombinowany</label>
+                </div>
+            </div>
+
+            <div class="mb-3 form-check">
+                <input type="checkbox" id="convert_to_pln" name="convert_to_pln" class="form-check-input">
+                <label for="convert_to_pln" class="form-check-label">Przelicz na PLN</label>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Generuj wykres</button>
+        </form>
+
+        {% if main_plot_url %}
+            <h2 class="mt-5">Główny wykres</h2>
+            <img src="data:image/png;base64,{{ main_plot_url }}" alt="Główny wykres" class="img-fluid">
+        {% endif %}
+        {% if volume_plot_url %}
+            <h2 class="mt-5">Wykres wolumenu</h2>
+            <img src="data:image/png;base64,{{ volume_plot_url }}" alt="Wykres wolumenu" class="img-fluid">
+        {% endif %}
+        {% if histogram_url %}
+            <h2 class="mt-5">Histogram dziennych zwrotów</h2>
+            <img src="data:image/png;base64,{{ histogram_url }}" alt="Histogram" class="img-fluid">
+        {% endif %}
+        {% if scatterplot_url %}
+            <h2 class="mt-5">Wykres rozproszenia (Otwarcie vs. Zamknięcie)</h2>
+            <img src="data:image/png;base64,{{ scatterplot_url }}" alt="Wykres rozproszenia" class="img-fluid">
+        {% endif %}
+        {% if kde_url %}
+            <h2 class="mt-5">Estymacja gęstości jądrowej (KDE)</h2>
+            <img src="data:image/png;base64,{{ kde_url }}" alt="KDE" class="img-fluid">
+        {% endif %}
+        {% if basic_stats %}
+            <h2 class="mt-5">Podstawowe statystyki</h2>
+            {{ basic_stats|safe }}
+        {% endif %}
+    </div>
+
+    <!-- Podłączanie Bootstrap 5 JS (opcjonalne, jeśli potrzebne) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
