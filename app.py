@@ -42,27 +42,27 @@ def plot():
     plt.figure(figsize=(12, 8))
 
     if plot_type == 'open':
-        plt.plot(selected_data['Open'], label='Opening Price', color='green')
+        plt.plot(selected_data['Open'], label='Cena otwarcia', color='green')
         prices = selected_data['Open']
     elif plot_type == 'close':
-        plt.plot(selected_data['Close'], label='Closing Price', color='blue')
+        plt.plot(selected_data['Close'], label='Cena zamknięcia', color='blue')
         prices = selected_data['Close']
     elif plot_type == 'combined':
-        plt.plot(selected_data['Open'], label='Opening Price', color='green')
-        plt.plot(selected_data['Close'], label='Closing Price', color='blue')
+        plt.plot(selected_data['Open'], label='Cena otwarcia', color='green')
+        plt.plot(selected_data['Close'], label='Cena zamknięcia', color='blue')
         prices = selected_data[['Open', 'Close']].stack()
 
-    plt.title('Apple Stock Prices')
-    plt.xlabel('Date')
-    plt.ylabel('Price ({})'.format('PLN' if convert_to_pln else '$'))
+    plt.title('Ceny akcji Apple')
+    plt.xlabel('Data')
+    plt.ylabel('Cena ({})'.format('PLN' if convert_to_pln else '$'))
     plt.legend()
 
     # Dodanie wykresu słupkowego (Volume)
     plt.figure(figsize=(12, 4))
     plt.bar(selected_data.index, selected_data['Volume'], color='purple', alpha=0.5)
-    plt.title('Trading Volume')
-    plt.xlabel('Date')
-    plt.ylabel('Volume')
+    plt.title('Wolumen')
+    plt.xlabel('Data')
+    plt.ylabel('Wolumen')
 
     # Obliczenie dziennych zmian procentowych
     daily_returns = selected_data['Close'].pct_change() * 100
@@ -70,27 +70,28 @@ def plot():
     # Generowanie histogramu zmian procentowych
     plt.figure(figsize=(10, 6))
     plt.hist(daily_returns.dropna(), bins=30, color='skyblue', edgecolor='black')
-    plt.title('Daily Percentage Returns Histogram')
-    plt.xlabel('Daily Returns (%)')
-    plt.ylabel('Frequency')
+    plt.title('Histogram dziennych zwrotów')
+    plt.xlabel('Dzieny zwrot (%)')
+    plt.ylabel('Częstotliwość')
 
     # Dodanie scatterplotu (Open vs. Close)
     plt.figure(figsize=(10, 6))
     plt.scatter(selected_data['Open'], selected_data['Close'], color='orange', alpha=0.7)
-    plt.title('Open vs. Close Scatterplot')
-    plt.xlabel('Open Price')
-    plt.ylabel('Close Price')
+    plt.title('Wykres punktowy (Otwarcie vs. Zamknięcie)')
+    plt.xlabel('Cena otwarcia')
+    plt.ylabel('Cena zamknięcia')
 
     # Generowanie wykresu gęstości (KDE)
     plt.figure(figsize=(10, 6))
     sns.kdeplot(prices, shade=True, color='magenta')
     plt.title('Kernel Density Estimation (KDE)')
-    plt.xlabel('Price')
-    plt.ylabel('Density')
+    plt.xlabel('Ceny')
+    plt.ylabel('Gęstość')
 
     # Obliczenie podstawowych statystyk
     basic_stats = prices.describe().to_frame().reset_index()
-    basic_stats.columns = ['Statistic', 'Value']
+    basic_stats.columns = ['Rodzaj', 'Wartość']
+    print(basic_stats)
 
     # Zapisanie wykresów do obiektu BytesIO
     main_plot_img = BytesIO()

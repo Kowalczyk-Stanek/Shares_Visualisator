@@ -52,7 +52,7 @@
             <!-- Main Content -->
             <div class="col-8">
                 {% if main_plot_url %}
-            <h2 class="mt-5">Główny wykres</h2>
+            <h2 class="mt-5">Wykres Ceny w czasie</h2>
             <img src="data:image/png;base64,{{ main_plot_url }}" alt="Główny wykres" class="img-fluid">
         {% endif %}
         {% if volume_plot_url %}
@@ -64,7 +64,7 @@
             <img src="data:image/png;base64,{{ histogram_url }}" alt="Histogram" class="img-fluid">
         {% endif %}
         {% if scatterplot_url %}
-            <h2 class="mt-5">Wykres rozproszenia (Otwarcie vs. Zamknięcie)</h2>
+            <h2 class="mt-5">Wykres punktowy (Otwarcie vs. Zamknięcie)</h2>
             <img src="data:image/png;base64,{{ scatterplot_url }}" alt="Wykres rozproszenia" class="img-fluid">
         {% endif %}
         {% if kde_url %}
