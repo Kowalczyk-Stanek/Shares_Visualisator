@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sidebar Bootstrap Example</title>
+    <title>Wizualizacja akcji</title>
     <!-- Bootstrap CSS -->
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
 </head>
@@ -13,7 +13,7 @@
             <!-- Sidebar -->
             <div class="col-4 bg-dark pl-5">
                 <div class="d-flex flex-column flex-shrink-0 p-3 text-light sticky-top" style="width: 90%;height:100vh;">
-                    <h2 class="mb-4">Wizualizacja danych akcji Apple</h2>
+                    <h2 class="mb-4">Wizualizacja akcji Apple</h2>
                     <form action="/plot" method="post">
                         <div class="mb-3">
                             <label for="start_date" class="form-label">Data początkowa:</label>
@@ -25,56 +25,90 @@
                         </div>
             
                         <div class="mb-3">
-                            <label class="form-check-label">Typ wykresu:</label>
+                            <label class="form-check-label">Dane dla głównego wykresu:</label>
                             <div class="form-check">
                                 <input type="radio" id="open" name="plot_type" value="open" class="form-check-input" checked>
-                                <label for="open" class="form-check-label">Otwarcie</label>
+                                <label for="open" class="form-check-label">Ceny otwarcia</label>
                             </div>
                             <div class="form-check">
                                 <input type="radio" id="close" name="plot_type" value="close" class="form-check-input">
-                                <label for="close" class="form-check-label">Zamknięcie</label>
+                                <label for="close" class="form-check-label">Ceny zamknięcia</label>
                             </div>
                             <div class="form-check">
                                 <input type="radio" id="combined" name="plot_type" value="combined" class="form-check-input">
-                                <label for="combined" class="form-check-label">Kombinowany</label>
+                                <label for="combined" class="form-check-label">Ceny otwarcia i zamknięcia</label>
                             </div>
                         </div>
-            
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" id="convert_to_pln" name="convert_to_pln" class="form-check-input">
-                            <label for="convert_to_pln" class="form-check-label">Przelicz na PLN</label>
-                        </div>
+
+
             
                         <button type="submit" class="btn btn-primary">Generuj wykres</button>
                     </form>
+                    {% if data_startowa and data_koncowa %}
+                    <div class="mb-3 mt-5">
+                        <h4>Wybrany zakres: {{data_startowa[:10]}} - {{data_koncowa[:10]}}</h4>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
             <!-- Main Content -->
             <div class="col-8">
                 {% if main_plot_url %}
-            <h2 class="mt-5">Wykres Ceny w czasie</h2>
-            <img src="data:image/png;base64,{{ main_plot_url }}" alt="Główny wykres" class="img-fluid">
-        {% endif %}
-        {% if volume_plot_url %}
-            <h2 class="mt-5">Wykres wolumenu</h2>
-            <img src="data:image/png;base64,{{ volume_plot_url }}" alt="Wykres wolumenu" class="img-fluid">
-        {% endif %}
-        {% if histogram_url %}
-            <h2 class="mt-5">Histogram dziennych zwrotów</h2>
-            <img src="data:image/png;base64,{{ histogram_url }}" alt="Histogram" class="img-fluid">
+            <h2 class="mt-5 text-center">Wykres Ceny w czasie</h2>
+            <img src="data:image/png;base64,{{ main_plot_url }}" alt="Główny wykres" class="img-fluid mx-auto d-block">
         {% endif %}
         {% if scatterplot_url %}
-            <h2 class="mt-5">Wykres punktowy (Otwarcie vs. Zamknięcie)</h2>
-            <img src="data:image/png;base64,{{ scatterplot_url }}" alt="Wykres rozproszenia" class="img-fluid">
+        <h2 class="mt-5 text-center">Wykres punktowy (Otwarcie vs. Zamknięcie)</h2>
+        <img src="data:image/png;base64,{{ scatterplot_url }}" alt="Wykres rozproszenia" class="img-fluid mx-auto d-block">
         {% endif %}
-        {% if kde_url %}
-            <h2 class="mt-5">Estymacja gęstości jądrowej (KDE)</h2>
-            <img src="data:image/png;base64,{{ kde_url }}" alt="KDE" class="img-fluid">
+        {% if volume_plot_url %}
+            <h2 class="mt-5 text-center">Wykres wolumenu</h2>
+            <img src="data:image/png;base64,{{ volume_plot_url }}" alt="Wykres wolumenu" class="img-fluid mx-auto d-block">
         {% endif %}
-        {% if basic_stats %}
-            <h2 class="mt-5">Podstawowe statystyki</h2>
-            {{ basic_stats|safe }}
+        {% if histogram_url %}
+            <h2 class="mt-5 text-center">Histogram dziennych zwrotów (Analiza rozkładu)</h2>
+            <img src="data:image/png;base64,{{ histogram_url }}" alt="Histogram" class="img-fluid mx-auto d-block">
         {% endif %}
+
+        {% if max_open_price and max_close_price %}
+        <h2 class="mt-5 text-center">Podstawowe statystyki</h2>
+        <table class="table table-bordered mt-5 mb-5" style="width: 80%; margin: auto;">
+            <thead>
+                <tr>
+                    <th scope="col">Rodzaj</th>
+                    <th scope="col">Otwarcie</th>
+                    <th scope="col">Zamknięcie</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Najwyższa cena</td>
+                    <td>{{ max_open_price|round(2) }}$</td>
+                    <td>{{  max_close_price|round(2) }}$</td>
+                </tr>
+                <tr>
+                    <td>Najniższa cena</td>
+                    <td>{{ min_open_price|round(2) }}$</td>
+                    <td>{{ min_close_price|round(2) }}$</td>
+                </tr>
+                <tr>
+                    <td>Średnia</td>
+                    <td>{{ mean_open_price|round(2) }}$</td>
+                    <td>{{ mean_close_price|round(2) }}$</td>
+                </tr>
+                <tr>
+                    <td>Mediana</td>
+                    <td>{{ median_open_price|round(2) }}$</td>
+                    <td>{{ median_close_price|round(2) }}$</td>
+                </tr>
+                <tr>
+                    <td>Odchylenie standardowe</td>
+                    <td>{{ std_open_price|round(2) }}$</td>
+                    <td>{{ std_close_price|round(2) }}$</td>
+                </tr>
+            </tbody>
+        </table>
+            {% endif %}
 
             </div>
         </div>
